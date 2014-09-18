@@ -29,8 +29,6 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	private WifiP2pManager manager;
 	private Channel channel;
 	private WifiP2pInfo info;
-	private int PORT = 8988;
-	private int SOCKET_TIMEOUT = 500;
 	private IntentFilter intentFilter = new IntentFilter();
 	private WiFiDirectBroadcastReceiver receiver;
 	
@@ -159,7 +157,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	
 	public interface WFDDeviceConnectedListener {
 		
-	    public void onDeviceConnected(Socket s, WifiP2pInfo info);
+	    public void onDeviceConnected(WFDPairInfo info);
 	    
 	    public void onDeviceConnectFailed(int reason);
 	    
@@ -189,8 +187,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         // After the group negotiation, we assign the group owner as the file
         // server. The file server is single threaded, single connection server
         // socket.
-        ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
-        conTask.execute();
+        wfdConnectedListener.onDeviceConnected(new WFDPairInfo(info));
 	}
 	
 	@Override
@@ -208,35 +205,6 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		}
 	}	
 	
-	private class ConnectionAsyncTask extends AsyncTask<Void, Void, String> {
-	
-		private WifiP2pInfo info;
-		
-		public ConnectionAsyncTask(WifiP2pInfo i) {
-			this.info = i;
-        }
-
-		@Override
-		protected String doInBackground(Void... params) {
-			try {
-				if (info.groupFormed && info.isGroupOwner) {
-		        	ServerSocket serverSocket = new ServerSocket(PORT);
-		        	Socket client = serverSocket.accept();
-		        	wfdConnectedListener.onDeviceConnected(client, info);
-		        } else if (info.groupFormed) {
-		        	String host = info.groupOwnerAddress.getHostAddress();		        
-		        	
-		        	Socket socket = new Socket();		        
-					socket.bind(null);				
-		            socket.connect((new InetSocketAddress(host, PORT)), SOCKET_TIMEOUT);
-		            wfdConnectedListener.onDeviceConnected(socket, info);
-		        }	
-	        } catch (IOException e) {				
-				e.printStackTrace();
-			}
-			return null;
-		}				
-	}
 	
 	/**
 	 * @param isWifiP2pEnabled the isWifiP2pEnabled to set
