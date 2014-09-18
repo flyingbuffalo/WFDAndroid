@@ -42,6 +42,12 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	public WFDDeviceDiscoveredListener wfdDiscoveredListener;
 	public WFDDeviceConnectedListener wfdConnectedListener;
 	
+	/** ERROR NUM **/
+	protected final int WFD_DISABLED = 999;
+	protected final int CHANNEL_LOST = 998;
+	protected final int DEVICES_RESET = 997;
+	protected final int UPDATE_THIS_DEVICE = 996;	
+	
 	public WFDManager(Context context) {
 		this.context = context;
 		manager = (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
@@ -53,7 +59,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 	}
 	
-	public void resisterReceiver() {
+	public void registerReceiver() {
 		receiver = new WiFiDirectBroadcastReceiver(this);
 		context.registerReceiver(receiver, intentFilter);
 	}
@@ -62,17 +68,11 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		context.unregisterReceiver(receiver);
 	}
 	
-	/**
-     * @param isWifiP2pEnabled the isWifiP2pEnabled to set
-     */
-    protected void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
-        this.isWifiP2pEnabled = isWifiP2pEnabled;
-    }
 	
 	public void getDevicesAsync() {
 		if(!isWifiP2pEnabled) {
 			// WFD OFF
-			wfdDiscoveredListener.onWFDdisabled();
+			wfdDiscoveredListener.onDevicesDiscoverFailed(WFD_DISABLED);
 		}
 		manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
 
@@ -90,8 +90,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 
 	}
 	
-	public void connectAsync(WFDDevice d, WFDDeviceConnectedListener l) {
-		final WFDDeviceConnectedListener listener = l != null ? l : wfdConnectedListener;		
+	public void pairAsync(WFDDevice d) {		
 			
 		WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = d.device.deviceAddress;
@@ -106,12 +105,12 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 
             @Override
             public void onFailure(int reasonCode) {
-            	listener.onDeviceConnectFailed(reasonCode);
+            	wfdConnectedListener.onDeviceConnectFailed(reasonCode);
             }
         });
 	}
 	
-	public void disconnect() {
+	public void unpair() {
 		manager.removeGroup(channel, new ActionListener() {
 			
 			@Override
@@ -127,7 +126,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	}
 	
 	/**
-	 * ÀÌº¥Æ®¸¦ Àü´Þ ¹ÞÀ» ¸®½º³Ê¸¦ µî·Ï
+	 * set Listener
 	 * @param listner
 	 */
 	public void setWFDDeviceDiscoveredListener(WFDDeviceDiscoveredListener l) {
@@ -144,15 +143,18 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		
 		public void onDevicesDiscoverFailed(int reasonCode);
 		
-		public void onChannelLost();	// When channel lost, called.
 		
-		public void onWFDdisabled();	// When WFD disabled, called.
+		/** onDevicesDiscoverFailedë¡œ í†µí•© **/
+		
+		//public void onChannelLost();	// When channel lost, called.
+		
+		//public void onWFDdisabled();	// When WFD disabled, called.
 		
 		/**
 	     * Remove all peers and clear all fields. This is called on
 	     * BroadcastReceiver receiving a state change event.
 	     */
-		public void onDevicesReset();
+		// public void onDevicesReset();
 	}
 	
 	public interface WFDDeviceConnectedListener {
@@ -161,7 +163,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	    
 	    public void onDeviceConnectFailed(int reason);
 	    
-	    public void onUpdateThisDevice(WFDDevice d);
+	    //public void onUpdateThisDevice(WFDDevice d);   // Update this device data;
 	    
 	    public void onDeviceDisconnected();
 	    
@@ -190,6 +192,21 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
         conTask.execute();
 	}
+	
+	@Override
+	public void onChannelDisconnected() {
+		// we will try once more
+		if (manager != null && !retryChannel) {
+			// Channel lost. Trying again
+			wfdDiscoveredListener.onDevicesDiscoverFailed(CHANNEL_LOST);
+			// TODO - data reset
+			retryChannel = true;
+			manager.initialize(context, context.getMainLooper(), this);
+		} else {
+			// Severe! Channel is probably lost permanently. Try Disable/Re-Enable P2P.
+			wfdDiscoveredListener.onDevicesDiscoverFailed(WFD_DISABLED);
+		}
+	}	
 	
 	private class ConnectionAsyncTask extends AsyncTask<Void, Void, String> {
 	
@@ -221,6 +238,13 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		}				
 	}
 	
+	/**
+	 * @param isWifiP2pEnabled the isWifiP2pEnabled to set
+	 */
+	protected void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
+		this.isWifiP2pEnabled = isWifiP2pEnabled;
+	}
+	
 	protected void requestConnectionInfo() {
 		manager.requestConnectionInfo(channel, this);		
 	}
@@ -229,18 +253,4 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		manager.requestPeers(channel, this);
 	}
 	
-	@Override
-	public void onChannelDisconnected() {
-		// we will try once more
-        if (manager != null && !retryChannel) {
-            // Channel lost. Trying again
-        	wfdDiscoveredListener.onChannelLost();
-        	// TODO - data reset
-            retryChannel = true;
-            manager.initialize(context, context.getMainLooper(), this);
-        } else {
-            // Severe! Channel is probably lost permanently. Try Disable/Re-Enable P2P.
-        	wfdDiscoveredListener.onWFDdisabled();
-        }
-	}	
 }

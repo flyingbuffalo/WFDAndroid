@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 	@Override
 	protected void onResume() {
 		super.onResume();
-		manager.resisterReceiver();
+		manager.registerReceiver();
 	}
 	
 	@Override
@@ -66,11 +66,11 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 		Log.d("TEST", "onDeviceConnectFailed");
 	}
 
-	@Override
-	public void onUpdateThisDevice(WFDDevice d) {
-		// TODO Auto-generated method stub
-		Log.d("TEST", "onUpdateThisDevice");
-	}
+//	@Override
+//	public void onUpdateThisDevice(WFDDevice d) {
+//		// TODO Auto-generated method stub
+//		Log.d("TEST", "onUpdateThisDevice");
+//	}
 
 	@Override
 	public void onDevicesDiscovered(List<WFDDevice> deviceList) {
@@ -83,7 +83,7 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 				device = d;
 			}
 			
-			manager.connectAsync(device);
+			manager.pairAsync(device);
 		}
 	}
 
@@ -93,23 +93,23 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 		Log.d("TEST", "onDevicesDiscoverFailed");
 	}
 
-	@Override
-	public void onChannelLost() {
-		// TODO Auto-generated method stub
-		Log.d("TEST", "onChannelLost");
-	}
-
-	@Override
-	public void onWFDdisabled() {
-		// TODO Auto-generated method stub
-		Log.d("TEST", "onWFDdisabled");
-	}
-
-	@Override
-	public void onDevicesReset() {
-		// TODO Auto-generated method stub
-		Log.d("TEST", "onDevicesReset");
-	}
+//	@Override
+//	public void onChannelLost() {
+//		// TODO Auto-generated method stub
+//		Log.d("TEST", "onChannelLost");
+//	}
+//
+//	@Override
+//	public void onWFDdisabled() {
+//		// TODO Auto-generated method stub
+//		Log.d("TEST", "onWFDdisabled");
+//	}
+//
+//	@Override
+//	public void onDevicesReset() {
+//		// TODO Auto-generated method stub
+//		Log.d("TEST", "onDevicesReset");
+//	}
 
 	@Override
 	public void onDeviceDisconnected() {

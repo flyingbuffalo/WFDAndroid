@@ -61,7 +61,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             } else {
                 manager.setIsWifiP2pEnabled(false);
             	// TODO - data reset
-                manager.wfdDiscoveredListener.onDevicesReset();
+                manager.wfdDiscoveredListener.onDevicesDiscoverFailed(manager.DEVICES_RESET);                
             }
             //Log.d(Activity.TAG, "P2P state changed - " + state);
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
@@ -90,13 +90,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             } else {
                 // It's a disconnect
             	// TODO - data reset
-            	manager.wfdDiscoveredListener.onDevicesReset();
+            	manager.wfdDiscoveredListener.onDevicesDiscoverFailed(manager.DEVICES_RESET);
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             
         	WFDDevice d = new WFDDevice((WifiP2pDevice) intent.getParcelableExtra(
                     WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
-            manager.wfdConnectedListener.onUpdateThisDevice(d);
+            manager.wfdConnectedListener.onDeviceConnectFailed(manager.UPDATE_THIS_DEVICE);
 
         }
     }
