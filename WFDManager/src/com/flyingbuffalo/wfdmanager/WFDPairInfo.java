@@ -13,7 +13,7 @@ public class WFDPairInfo {
 	public WifiP2pInfo info;
 	
 	public final static int PORT = 8988;
-	public final static int SOCKET_TIMEOUT = 500;
+	public final static int SOCKET_TIMEOUT = 10000;
 	public int port = PORT;
 	public int socket_timeout = SOCKET_TIMEOUT;
 	

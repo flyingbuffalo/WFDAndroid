@@ -21,6 +21,7 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class WFDManager implements ChannelListener, PeerListListener, ConnectionInfoListener {
 	
@@ -188,6 +189,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         // server. The file server is single threaded, single connection server
         // socket.
         wfdConnectedListener.onDeviceConnected(new WFDPairInfo(info));
+        Log.d("TEST", "Connected");
 	}
 	
 	@Override
