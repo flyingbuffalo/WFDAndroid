@@ -8,6 +8,11 @@ import java.net.Socket;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
 
+/**
+ * Paired WiFi direct device info. Wrapping origin object for library.
+ * @author Shin
+ *
+ */
 public class WFDPairInfo {
 
 	public WifiP2pInfo info;
@@ -19,23 +24,43 @@ public class WFDPairInfo {
 	
 	protected PairSocketConnectedListener pairSocketConnectedListener;
 	
+	/**
+	 * Constructor WFDPairInfo
+	 * @param i WifiP2pInfo
+	 */
 	public WFDPairInfo(WifiP2pInfo i) {
 		this.info = i;
 	}
 
+	/**
+	 * Request to connect socket, to return socket.
+	 * Socket is returned on onSocketConnected.
+	 */
 	public void getSocket() {
 		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
         conTask.execute();        
 	}
 	
+	/**
+	 * set PairSocketConnectedListener.
+	 * @param l PairSocketConnectedListener
+	 */
 	public void setPairSocketConnectedListener(PairSocketConnectedListener l) {
 		this.pairSocketConnectedListener = l;
 	}
 	
+	/**
+	 * To getting socket, using this listener.
+	 * @author Shin
+	 *
+	 */
 	public interface PairSocketConnectedListener {
         public void onSocketConnected(Socket s);
 	}
 	
+	 // After the group negotiation, we assign the group owner as the file
+    // server. The file server is single threaded, single connection server
+    // socket.
 	private class ConnectionAsyncTask extends AsyncTask<Void, Void, String> {
 		
 		private WifiP2pInfo info;

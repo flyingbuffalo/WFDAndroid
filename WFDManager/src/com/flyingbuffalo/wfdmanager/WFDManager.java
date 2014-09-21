@@ -47,6 +47,11 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	protected final int DEVICES_RESET = 997;
 	protected final int UPDATE_THIS_DEVICE = 996;	
 	
+	/**
+	 * WFDManager is easy to use WiFi direct in Android. Also, this library support to Win 8.
+	 * You can use to get WiFi direct devices around, to pair device and to connect it with socket. 
+	 * @param context To register receiver.
+	 */
 	public WFDManager(Context context) {
 		this.context = context;
 		manager = (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
@@ -58,16 +63,25 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 	}
 	
+	/**
+	 * Register receiver. Recommend to call on OnResume
+	 */
 	public void registerReceiver() {
 		receiver = new WiFiDirectBroadcastReceiver(this);
 		context.registerReceiver(receiver, intentFilter);
 	}
 	
+	/**
+	 * Unregister receiver. Recommend to call on On onPause
+	 */
 	public void unregisterReceiver() {
 		context.unregisterReceiver(receiver);
 	}
 	
-	
+	/**
+	 * Get Wifi Direct Devices around.
+	 * Device List will be return on onDevicesDiscoverFailed.
+	 */
 	public void getDevicesAsync() {
 		if(!isWifiP2pEnabled) {
 			// WFD OFF
@@ -89,6 +103,11 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 
 	}
 	
+	/**
+	 * Pair with WiFi direct device. It not mean socket connection.
+	 * Connection info will be return on onDeviceConnected.
+	 * @param d WiFi direct device will be connected.
+	 */
 	public void pairAsync(WFDDevice d) {		
 			
 		WifiP2pConfig config = new WifiP2pConfig();
@@ -109,12 +128,15 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
         });
 	}
 	
+	/**
+	 * Unpair all devices using remove current p2p group.
+	 */
 	public void unpair() {
 		manager.removeGroup(channel, new ActionListener() {
 			
 			@Override
 			public void onSuccess() {
-				wfdConnectedListener.onDeviceDisconnected();				
+				// wfdConnectedListener.onDeviceDisconnected();				
 			}
 			
 			@Override
@@ -125,21 +147,38 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	}
 	
 	/**
-	 * set Listener
-	 * @param listner
+	 * set WFDDeviceDiscoveredListener
+	 * @param listner WFDDeviceDiscoveredListener
 	 */
 	public void setWFDDeviceDiscoveredListener(WFDDeviceDiscoveredListener l) {
 		this.wfdDiscoveredListener = l;
 	}
 	
+	/**
+	 * set WFDDeviceConnectedListener
+	 * @param listner WFDDeviceConnectedListener
+	 */
 	public void setWFDDeviceConnectedListener(WFDDeviceConnectedListener l) {
 		this.wfdConnectedListener = l;
 	}
 
+	/**
+	 * Listener when to find WiFi Devices.
+	 * @author Shin
+	 *
+	 */
 	public interface WFDDeviceDiscoveredListener {
 		
+		/**
+		 * When devices is found, called.
+		 * @param deviceList found WiFi direct devices.
+		 */
 		public void onDevicesDiscovered(List<WFDDevice> deviceList);
 		
+		/**
+		 * When getDevicesAsync failed, called.
+		 * @param reasonCode error code.
+		 */
 		public void onDevicesDiscoverFailed(int reasonCode);
 		
 		
@@ -156,18 +195,32 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 		// public void onDevicesReset();
 	}
 	
+	/**
+	 * Listener when to connect WiFi Device.
+	 * @author Shin
+	 *
+	 */
 	public interface WFDDeviceConnectedListener {
 		
+		/**
+		 * When WiFi Direct device is connected, called. And return WFDPairInfo.
+		 * @param info contain pair device info including host address, etc.
+		 */
 	    public void onDeviceConnected(WFDPairInfo info);
 	    
+	    /**
+	     * When pairing is failed, called.
+	     * @param reason error code.
+	     */
 	    public void onDeviceConnectFailed(int reason);
 	    
 	    //public void onUpdateThisDevice(WFDDevice d);   // Update this device data;
 	    
-	    public void onDeviceDisconnected();
+	    //public void onDeviceDisconnected();
 	    
 	}
 
+	/** wrapped android API **/
 	@Override
 	public void onPeersAvailable(WifiP2pDeviceList peers) {
 		List<WifiP2pDevice> device_list = new ArrayList<>();
@@ -185,9 +238,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	public void onConnectionInfoAvailable(WifiP2pInfo info) {
 		this.info = info;
 		
-        // After the group negotiation, we assign the group owner as the file
-        // server. The file server is single threaded, single connection server
-        // socket.
+       
         wfdConnectedListener.onDeviceConnected(new WFDPairInfo(info));
         Log.d("TEST", "Connected");
 	}
@@ -209,12 +260,14 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	
 	
 	/**
+	 * set WiFi direct is working.
 	 * @param isWifiP2pEnabled the isWifiP2pEnabled to set
 	 */
 	protected void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
 		this.isWifiP2pEnabled = isWifiP2pEnabled;
 	}
 	
+	/** wrapping method for called from BroadcastReceiver **/
 	protected void requestConnectionInfo() {
 		manager.requestConnectionInfo(channel, this);		
 	}

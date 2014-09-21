@@ -66,8 +66,7 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 	}
 
 	@Override
-	public void onDeviceConnected(final WFDPairInfo info) {
-		// TODO Auto-generated method stub
+	public void onDeviceConnected(final WFDPairInfo info) { 
 		Log.d("TEST", "onDeviceConnected");
 		flag = 1;
 		info.setPairSocketConnectedListener(new PairSocketConnectedListener() {
@@ -154,11 +153,11 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 //		Log.d("TEST", "onDevicesReset");
 //	}
 
-	@Override
-	public void onDeviceDisconnected() {
-		// TODO Auto-generated method stub
-		Log.d("TEST", "onDeviceDisconnected");
-	}
+//	@Override
+//	public void onDeviceDisconnected() {
+//		// TODO Auto-generated method stub
+//		Log.d("TEST", "onDeviceDisconnected");
+//	}
 	
 	public class MessageAsyncTask extends AsyncTask<Void,Void,Void> {
 		private Socket client = null;
