@@ -1,9 +1,11 @@
 package com.flyingbuffalo.wfdmanager;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
@@ -32,6 +34,14 @@ public class WFDPairInfo {
 		this.info = i;
 	}
 
+	public String getLocalAddress() throws UnknownHostException {
+		return InetAddress.getLocalHost().toString();
+	}
+	
+	public String getRemoteAddress() {
+		return info.groupOwnerAddress.getHostAddress();				
+	}		
+	
 	/**
 	 * Request to connect socket, to return socket.
 	 * Socket is returned on onSocketConnected.
