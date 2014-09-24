@@ -38,9 +38,9 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		manager = new WFDManager(getApplicationContext());
-		manager.setWFDDeviceDiscoveredListener(this);
-		manager.setWFDDeviceConnectedListener(this);
+		manager = new WFDManager(getApplicationContext(),this, this);
+//		manager.setWFDDeviceDiscoveredListener(this);
+//		manager.setWFDDeviceConnectedListener(this);
 		
 		Button btn_find = (Button) findViewById(R.id.btn_find);
 		btn_find.setOnClickListener(new OnClickListener() {
@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 	}
 
 	@Override
-	public void onDeviceConnectFailed(int reason) {
+	public void onDeviceConnectFailed(int reasonCode) {
 		// TODO Auto-generated method stub
 		Log.d("TEST", "onDeviceConnectFailed");
 	}
@@ -153,11 +153,11 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 //		Log.d("TEST", "onDevicesReset");
 //	}
 
-//	@Override
-//	public void onDeviceDisconnected() {
-//		// TODO Auto-generated method stub
-//		Log.d("TEST", "onDeviceDisconnected");
-//	}
+	@Override
+	public void onDeviceDisconnected() {
+		// TODO Auto-generated method stub
+		Log.d("TEST", "onDeviceDisconnected");
+	}
 	
 	public class MessageAsyncTask extends AsyncTask<Void,Void,Void> {
 		private Socket client = null;
