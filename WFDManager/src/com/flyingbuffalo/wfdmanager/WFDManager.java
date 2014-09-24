@@ -52,8 +52,14 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	 * You can use to get WiFi direct devices around, to pair device and to connect it with socket. 
 	 * @param context To register receiver.
 	 */
-	public WFDManager(Context context) {
+	public WFDManager(Context context, 
+			WFDDeviceDiscoveredListener wfdDiscoveredListener,
+			WFDDeviceConnectedListener wfdConnectedListener) {
 		this.context = context;
+		
+		this.wfdDiscoveredListener = wfdDiscoveredListener;
+		this.wfdConnectedListener = wfdConnectedListener;
+		
 		manager = (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
 		channel = manager.initialize(context, context.getMainLooper(), null);
 		
@@ -212,11 +218,11 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	     * When pairing is failed, called.
 	     * @param reason error code.
 	     */
-	    public void onDeviceConnectFailed(int reason);
+	    public void onDeviceConnectFailed(int reasonCode);
 	    
 	    //public void onUpdateThisDevice(WFDDevice d);   // Update this device data;
 	    
-	    //public void onDeviceDisconnected();
+	    public void onDeviceDisconnected();
 	    
 	}
 
