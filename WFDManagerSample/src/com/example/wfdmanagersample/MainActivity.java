@@ -69,7 +69,9 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 	public void onDeviceConnected(final WFDPairInfo info) { 
 		Log.d("TEST", "onDeviceConnected");
 		flag = 1;
-		info.setPairSocketConnectedListener(new PairSocketConnectedListener() {
+		
+		Log.d("TEST", "get socket call");
+		info.connectSocketAsync(new PairSocketConnectedListener() {
 			
 			@Override
 			public void onSocketConnected(Socket s) {
@@ -96,9 +98,7 @@ public class MainActivity extends Activity implements WFDDeviceDiscoveredListene
 					e.printStackTrace();
 				}
 			}
-		});
-		Log.d("TEST", "get socket call");
-		info.getSocket();
+		});				
 		Log.d("TEST", "get socket done");
 	}
 

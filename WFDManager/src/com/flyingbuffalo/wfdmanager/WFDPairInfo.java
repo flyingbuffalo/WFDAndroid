@@ -45,18 +45,24 @@ public class WFDPairInfo {
 	/**
 	 * Request to connect socket, to return socket.
 	 * Socket is returned on onSocketConnected.
-	 */
+	 */	
+	@Deprecated 
 	public void getSocket() {
 		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
         conTask.execute();        
 	}
 	
 	/**
-	 * set PairSocketConnectedListener.
+	 * .
+	 * Set PairSocketConnectedListener and Request to connect socket, to return socket through listener.
+	 * Socket is returned on onSocketConnected.
 	 * @param l PairSocketConnectedListener
 	 */
-	public void setPairSocketConnectedListener(PairSocketConnectedListener l) {
+	public void connectSocketAsync(PairSocketConnectedListener l) {
 		this.pairSocketConnectedListener = l;
+		
+		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
+        conTask.execute();    
 	}
 	
 	/**

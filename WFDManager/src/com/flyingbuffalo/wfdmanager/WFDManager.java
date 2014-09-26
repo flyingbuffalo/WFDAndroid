@@ -229,7 +229,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	/** wrapped android API **/
 	@Override
 	public void onPeersAvailable(WifiP2pDeviceList peers) {
-		List<WifiP2pDevice> device_list = new ArrayList<>();
+		List<WifiP2pDevice> device_list = new ArrayList<WifiP2pDevice>();
 		device_list.addAll(peers.getDeviceList());
 		
 		List<WFDDevice> list = new ArrayList<WFDDevice>();
