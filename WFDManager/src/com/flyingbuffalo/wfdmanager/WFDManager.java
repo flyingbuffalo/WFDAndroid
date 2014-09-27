@@ -1,9 +1,5 @@
 package com.flyingbuffalo.wfdmanager;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +16,6 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
-import android.os.AsyncTask;
 import android.util.Log;
 
 public class WFDManager implements ChannelListener, PeerListListener, ConnectionInfoListener {
@@ -29,7 +24,6 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	private Context context;
 	private WifiP2pManager manager;
 	private Channel channel;
-	private WifiP2pInfo info;
 	private IntentFilter intentFilter = new IntentFilter();
 	private WiFiDirectBroadcastReceiver receiver;
 	
@@ -40,12 +34,13 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	/** listeners **/
 	public WFDDeviceDiscoveredListener wfdDiscoveredListener;
 	public WFDDeviceConnectedListener wfdConnectedListener;
+	public WFDDevice mydevice;
 	
 	/** ERROR NUM **/
-	protected final int WFD_DISABLED = 999;
-	protected final int CHANNEL_LOST = 998;
-	protected final int DEVICES_RESET = 997;
-	protected final int UPDATE_THIS_DEVICE = 996;	
+	public final static int WFD_DISABLED = 999;
+	public final static int CHANNEL_LOST = 998;
+	public final static int DEVICES_RESET = 997;
+	public final static int UPDATE_THIS_DEVICE = 996;	
 	
 	/**
 	 * WFDManager is easy to use WiFi direct in Android. Also, this library support to Win 8.
@@ -242,10 +237,7 @@ public class WFDManager implements ChannelListener, PeerListListener, Connection
 	
 	@Override
 	public void onConnectionInfoAvailable(WifiP2pInfo info) {
-		this.info = info;
-		
-       
-        wfdConnectedListener.onDeviceConnected(new WFDPairInfo(info));
+		wfdConnectedListener.onDeviceConnected(new WFDPairInfo(info));
         Log.d("TEST", "Connected");
 	}
 	

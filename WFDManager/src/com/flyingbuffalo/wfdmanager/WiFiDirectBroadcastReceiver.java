@@ -15,16 +15,12 @@
  */
 package com.flyingbuffalo.wfdmanager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.Channel;
-import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
-import android.util.Log;
 
 /**
  * A BroadcastReceiver that notifies of important wifi p2p events.
@@ -59,7 +55,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             } else {
                 manager.setIsWifiP2pEnabled(false);
             	// TODO - data reset
-                manager.wfdDiscoveredListener.onDevicesDiscoverFailed(manager.DEVICES_RESET);                
+                manager.wfdDiscoveredListener.onDevicesDiscoverFailed(WFDManager.DEVICES_RESET);                
             }
             //Log.d(Activity.TAG, "P2P state changed - " + state);
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
@@ -88,14 +84,14 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             } else {
                 // It's a disconnect
             	// TODO - data reset
-            	manager.wfdDiscoveredListener.onDevicesDiscoverFailed(manager.DEVICES_RESET);
+            	manager.wfdDiscoveredListener.onDevicesDiscoverFailed(WFDManager.DEVICES_RESET);
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             
         	WFDDevice d = new WFDDevice((WifiP2pDevice) intent.getParcelableExtra(
                     WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
-            manager.wfdConnectedListener.onDeviceConnectFailed(manager.UPDATE_THIS_DEVICE);
-
+            manager.wfdConnectedListener.onDeviceConnectFailed(WFDManager.UPDATE_THIS_DEVICE);
+            manager.mydevice = d;
         }
     }
     
