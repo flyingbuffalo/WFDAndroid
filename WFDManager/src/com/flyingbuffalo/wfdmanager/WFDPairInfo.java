@@ -24,6 +24,7 @@ public class WFDPairInfo {
 	public final static int SOCKET_TIMEOUT = 10000;
 	public int port = PORT;
 	public int socket_timeout = SOCKET_TIMEOUT;
+	ServerSocket serverSocket = null;
 	
 	protected PairSocketConnectedListener pairSocketConnectedListener;
 	
@@ -88,7 +89,6 @@ public class WFDPairInfo {
 
 		@Override
 		protected String doInBackground(Void... params) {
-			ServerSocket serverSocket = null;
 			try {							
 				if (info.groupFormed && info.isGroupOwner) {
 					serverSocket = new ServerSocket(PORT);
