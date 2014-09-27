@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * Paired WiFi direct device info. Wrapping origin object for library.
@@ -87,9 +88,15 @@ public class WFDPairInfo {
 
 		@Override
 		protected String doInBackground(Void... params) {
-			try {
+			ServerSocket serverSocket = null;
+			try {							
 				if (info.groupFormed && info.isGroupOwner) {
-		        	ServerSocket serverSocket = new ServerSocket(PORT);
+					if (serverSocket == null) {
+						serverSocket = new ServerSocket();
+						serverSocket.setReuseAddress(true);
+						serverSocket.bind(new InetSocketAddress(PORT));
+					}
+					
 		        	Socket client = serverSocket.accept();
 		        	pairSocketConnectedListener.onSocketConnected(client);
 		        } else if (info.groupFormed) {
@@ -102,7 +109,16 @@ public class WFDPairInfo {
 		        }	
 	        } catch (IOException e) {				
 				e.printStackTrace();
-			}
+			} 
+//			finally {
+//				if(serverSocket != null)
+//					try {						
+//						serverSocket.close();
+//						Log.d("FILE_TEST", "Server socket closed");
+//					} catch (IOException e) { 
+//						e.printStackTrace();
+//					}
+//			}
 			return null;
 		}				
 	}
