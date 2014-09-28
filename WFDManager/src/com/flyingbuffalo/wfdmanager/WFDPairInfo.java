@@ -51,7 +51,7 @@ public class WFDPairInfo {
 	@Deprecated 
 	public void getSocket() {
 		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
-        conTask.execute();        
+        conTask.run();        
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class WFDPairInfo {
 		
 		Log.d("TEST", "connectSocketAsync");
 		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
-        conTask.execute();
+        conTask.run();
 	}
 	
 	/**
