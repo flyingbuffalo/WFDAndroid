@@ -80,7 +80,7 @@ public class WFDPairInfo {
 	 // After the group negotiation, we assign the group owner as the file
     // server. The file server is single threaded, single connection server
     // socket.
-	private class ConnectionAsyncTask extends AsyncTask<Void, Void, String> {
+	private class ConnectionAsyncTask extends Thread {
 		
 		private WifiP2pInfo info;
 		
@@ -90,7 +90,7 @@ public class WFDPairInfo {
         }
 
 		@Override
-		protected String doInBackground(Void... params) {
+		public void run() {
 			try {							
 				if (info.groupFormed && info.isGroupOwner) {
 					Log.d("TEST", "GROUPOWNER");
@@ -105,9 +105,7 @@ public class WFDPairInfo {
 		        	Socket socket = new Socket();		
 	            	socket.bind(null);
 	            	socket.connect(new InetSocketAddress(host, PORT), 5000);
-	            			
-//					socket.bind(null);
-//		            socket.connect((new InetSocketAddress(host, port)), socket_timeout);
+
 		            pairSocketConnectedListener.onSocketConnected(socket);
 		        }	
 	        } catch (IOException e) {
@@ -121,7 +119,6 @@ public class WFDPairInfo {
 					}
 				}
 			}
-			return null;
 		}				
 	}
 }
