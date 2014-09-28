@@ -86,6 +86,7 @@ public class WFDPairInfo {
 		
 		public ConnectionAsyncTask(WifiP2pInfo i) {
 			this.info = i;
+			Log.d("TEST", "Create ConnectAsync");
         }
 
 		@Override
@@ -111,7 +112,15 @@ public class WFDPairInfo {
 		        }	
 	        } catch (IOException e) {
 				e.printStackTrace();
-			} 
+			} finally {
+				if(serverSocket != null) {
+					try {
+						serverSocket.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 			return null;
 		}				
 	}
