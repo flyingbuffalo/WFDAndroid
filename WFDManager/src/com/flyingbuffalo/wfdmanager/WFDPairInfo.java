@@ -95,6 +95,8 @@ public class WFDPairInfo {
 				if (info.groupFormed && info.isGroupOwner) {
 					Log.d("TEST", "GROUPOWNER");
 					serverSocket = new ServerSocket(PORT);
+					serverSocket.setReuseAddress(true);	
+					serverSocket.bind(new InetSocketAddress(PORT));
 					Log.d("FILE_TEST", "Server socket wait connect request");
 		        	Socket socket = serverSocket.accept();
 		        	Log.d("FILE_TEST", "Server socket accept connect");
