@@ -63,6 +63,7 @@ public class WFDPairInfo {
 	public void connectSocketAsync(PairSocketConnectedListener l) {
 		this.pairSocketConnectedListener = l;
 		
+		Log.d("TEST", "connectSocketAsync");
 		ConnectionAsyncTask conTask = new ConnectionAsyncTask(info);
         conTask.execute();
 	}
@@ -91,31 +92,26 @@ public class WFDPairInfo {
 		protected String doInBackground(Void... params) {
 			try {							
 				if (info.groupFormed && info.isGroupOwner) {
+					Log.d("TEST", "GROUPOWNER");
 					serverSocket = new ServerSocket(PORT);
 					Log.d("FILE_TEST", "Server socket wait connect request");
 		        	Socket socket = serverSocket.accept();
 		        	Log.d("FILE_TEST", "Server socket accept connect");
 		        	pairSocketConnectedListener.onSocketConnected(socket);
-		        } else if (info.groupFormed) {
-		        	String host = info.groupOwnerAddress.getHostAddress();		        
-		        	
-		        	Socket socket = new Socket();		        
-					socket.bind(null);
-		            socket.connect((new InetSocketAddress(host, port)), socket_timeout);
+		        } else if (info.groupFormed) {       
+		        	Log.d("TEST", "CLIENT");
+		        	String host = info.groupOwnerAddress.getHostAddress();		 
+		        	Socket socket = new Socket();		
+	            	socket.bind(null);
+	            	socket.connect(new InetSocketAddress(host, PORT), 5000);
+	            			
+//					socket.bind(null);
+//		            socket.connect((new InetSocketAddress(host, port)), socket_timeout);
 		            pairSocketConnectedListener.onSocketConnected(socket);
 		        }	
 	        } catch (IOException e) {
 				e.printStackTrace();
 			} 
-			finally {
-				if(serverSocket != null)
-					try {						
-						serverSocket.close();
-						Log.d("FILE_TEST", "Server socket closed");
-					} catch (IOException e) { 
-						e.printStackTrace();
-					}
-			}
 			return null;
 		}				
 	}
