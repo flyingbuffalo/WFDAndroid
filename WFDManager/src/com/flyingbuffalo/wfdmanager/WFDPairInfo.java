@@ -96,9 +96,11 @@ public class WFDPairInfo {
 					Log.d("TEST", "GROUPOWNER");
 					serverSocket = new ServerSocket(PORT);
 					Log.d("FILE_TEST", "Server socket wait connect request");
+					serverSocket.setReuseAddress(true);
 		        	Socket socket = serverSocket.accept();
 		        	Log.d("FILE_TEST", "Server socket accept connect");
 		        	pairSocketConnectedListener.onSocketConnected(socket);
+		        	Log.d("FILE_TEST", "onSocketconnected call on server");
 		        } else if (info.groupFormed) {       
 		        	Log.d("TEST", "CLIENT");
 		        	String host = info.groupOwnerAddress.getHostAddress();		 
@@ -109,6 +111,7 @@ public class WFDPairInfo {
 //					socket.bind(null);
 //		            socket.connect((new InetSocketAddress(host, port)), socket_timeout);
 		            pairSocketConnectedListener.onSocketConnected(socket);
+		            Log.d("FILE_TEST", "onSocketconnected call on client");
 		        }	
 	        } catch (IOException e) {
 				e.printStackTrace();
